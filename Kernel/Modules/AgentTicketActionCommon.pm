@@ -2691,6 +2691,17 @@ sub _Mask {
                     %Ticket,
                 );
 
+                my $PendingTimeSettings = {};
+                if ( $Ticket{UnlockTimeout} && $Ticket{UntilTime} ) {
+                    my $PendingTimeObj = $Kernel::OM->Create(
+                        'Kernel::System::DateTime',
+                        ObjectParams => {
+                            Epoch => $Ticket{UnlockTimeout} + $Ticket{UntilTime},
+                        },
+                    );
+                    $PendingTimeSettings = $PendingTimeObj->Get();
+                }
+
                 $Param{DateString} = $LayoutObject->BuildDateSelection(
                     %Param,
                     Format           => 'DateInputFormatLong',
@@ -2702,6 +2713,13 @@ sub _Mask {
                     Validate             => 1,
                     ValidateDateInFuture => 1,
                     Calendar             => $Calendar,
+                    Prefix               => IsHashRefWithData($PendingTimeSettings) ? 'PendingTime' : undef,
+                    PendingTimeYear      => $PendingTimeSettings->{Year}|| undef,
+                    PendingTimeMonth     => $PendingTimeSettings->{Month} || undef,
+                    PendingTimeDay       => $PendingTimeSettings->{Day} || undef,
+                    PendingTimeHour      => $PendingTimeSettings->{Hour} || undef,
+                    PendingTimeMinute    => $PendingTimeSettings->{Minute} || undef,
+                    PendingTimeSecond    => $PendingTimeSettings->{Second} || undef,
                 );
 
                 $LayoutObject->Block(
