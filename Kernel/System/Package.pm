@@ -284,8 +284,8 @@ sub RepositoryGet {
 
     # get repository
     $DBObject->Prepare(
-        SQL   => 'SELECT content FROM package_repository WHERE name = ? AND version = ?',
-        Bind  => [ \$Param{Name}, \$Param{Version} ],
+        SQL   => 'SELECT content FROM package_repository WHERE LOWER(name) = ? AND version = ?',
+        Bind  => [ \lc $Param{Name}, \$Param{Version} ],
         Limit => 1,
     );
 
@@ -395,8 +395,8 @@ sub RepositoryAdd {
 
     if ($PackageExists) {
         $DBObject->Do(
-            SQL  => 'DELETE FROM package_repository WHERE name = ? AND version = ?',
-            Bind => [ \$Structure{Name}->{Content}, \$Structure{Version}->{Content} ],
+            SQL  => 'DELETE FROM package_repository WHERE LOWER(name) = ? AND version = ?',
+            Bind => [ \lc $Structure{Name}->{Content}, \$Structure{Version}->{Content} ],
         );
     }
 
@@ -454,8 +454,8 @@ sub RepositoryRemove {
     }
 
     # create sql
-    my @Bind = ( \$Param{Name} );
-    my $SQL  = 'DELETE FROM package_repository WHERE name = ?';
+    my @Bind = ( \lc $Param{Name} );
+    my $SQL  = 'DELETE FROM package_repository WHERE LOWER(name) = ?';
     if ( $Param{Version} ) {
         $SQL .= ' AND version = ?';
         push @Bind, \$Param{Version};
@@ -612,9 +612,9 @@ sub PackageInstall {
     return if !$Kernel::OM->Get('Kernel::System::DB')->Do(
         SQL => 'UPDATE package_repository SET install_status = \''
             . Translatable('installed') . '\''
-            . ' WHERE name = ? AND version = ?',
+            . ' WHERE LOWER(name) = ? AND version = ?',
         Bind => [
-            \$Structure{Name}->{Content},
+            \lc $Structure{Name}->{Content},
             \$Structure{Version}->{Content},
         ],
     );
@@ -813,7 +813,7 @@ sub PackageUpgrade {
     my $InstalledVersion = 0;
     for my $Package ( $Self->RepositoryList() ) {
 
-        if ( $Structure{Name}->{Content} eq $Package->{Name}->{Content} ) {
+        if ( lc $Structure{Name}->{Content} eq lc $Package->{Name}->{Content} ) {
 
             if ( $Package->{Status} =~ /^installed$/i ) {
                 $Installed          = 1;
@@ -826,7 +826,7 @@ sub PackageUpgrade {
     if ( !$Installed ) {
         $Kernel::OM->Get('Kernel::System::Log')->Log(
             Priority => 'notice',
-            Message  => 'Package is not installed, try a installation!',
+            Message  => 'Package is not installed, try an installation!',
         );
         return $Self->PackageInstall(%Param);
     }
@@ -921,9 +921,9 @@ sub PackageUpgrade {
     return if !$Kernel::OM->Get('Kernel::System::DB')->Do(
         SQL => 'UPDATE package_repository SET install_status = \''
             . Translatable('installed') . '\''
-            . ' WHERE name = ? AND version = ?',
+            . ' WHERE LOWER(name) = ? AND version = ?',
         Bind => [
-            \$Structure{Name}->{Content}, \$Structure{Version}->{Content},
+            \lc $Structure{Name}->{Content}, \$Structure{Version}->{Content},
         ],
     );
 
@@ -2739,8 +2739,8 @@ sub PackageIsInstalled {
 
     $DBObject->Prepare(
         SQL => "SELECT name FROM package_repository "
-            . "WHERE name = ? AND install_status = 'installed'",
-        Bind  => [ \$Param{Name} ],
+            . "WHERE LOWER(name) = ? AND install_status = 'installed'",
+        Bind  => [ \lc $Param{Name} ],
         Limit => 1,
     );
 
@@ -3980,7 +3980,7 @@ sub _PackageFileCheck {
     PACKAGE:
     for my $Package ( $Self->RepositoryList() ) {
 
-        next PACKAGE if $Param{Structure}->{Name}->{Content} eq $Package->{Name}->{Content};
+        next PACKAGE if lc $Param{Structure}->{Name}->{Content} eq lc $Package->{Name}->{Content};
 
         for my $FileNew ( @{ $Param{Structure}->{Filelist} } ) {
 
