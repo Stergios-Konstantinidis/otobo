@@ -200,6 +200,7 @@ sub Run {
 
     # iterate over all queues, print results;
     my @StatusTotal;
+    my $SumOfTotals = 0;
     QUEUE:
     for my $Queue ( sort values %Queues ) {
 
@@ -248,11 +249,16 @@ sub Run {
             },
         );
 
+        $SumOfTotals += $RowTotal;
+
     }
 
     if ($HasContent) {
         $LayoutObject->Block(
             Name => 'ContentLargeTicketQueueOverviewStatusTotalRow',
+            Data => {
+                SumOfTotals => $SumOfTotals,
+            },
         );
 
         for my $StateOrderID ( sort { $a <=> $b } keys %ConfiguredStates ) {
