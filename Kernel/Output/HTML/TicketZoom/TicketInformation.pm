@@ -376,6 +376,8 @@ sub Run {
 
     # to store dynamic fields to be displayed in the process widget and in the sidebar
     my (@FieldsSidebar);
+    # store display values for dynamic fields in case of links to them
+    my %DynamicFieldDisplayValues;
 
     # cycle trough the activated Dynamic Fields for ticket object
     DYNAMICFIELD:
@@ -407,6 +409,7 @@ sub Run {
                 Get('Ticket::Frontend::DynamicFieldsZoomMaxSizeSidebar')
                 || 18,    # limit for sidebar display
         );
+        $DynamicFieldDisplayValues{"DynamicField_$DynamicFieldConfig->{Name}"} = $ValueStrg->{Title};
 
         if ( $Self->{DisplaySettings}->{DynamicField}->{ $DynamicFieldConfig->{Name} } ) {
             push @FieldsSidebar, {
@@ -492,6 +495,9 @@ sub Run {
                     Title       => $Field->{Title},
                     Link        => $Field->{Link},
                     LinkPreview => $Field->{LinkPreview},
+
+                    # also passing all dynamic field display values in case of links need them
+                    %DynamicFieldDisplayValues,
 
                     # Include unique parameter with dynamic field name in case of collision with others.
                     #   Please see bug#13362 for more information.
