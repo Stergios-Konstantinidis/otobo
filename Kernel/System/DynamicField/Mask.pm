@@ -287,7 +287,7 @@ sub EditSectionRender {
                         Name => $ColBlockName,
                         Data => {
                             %CellBlockData,
-                            Label       => $DynamicFieldHTML->{Label},                           # TODO: fix the numbering of 'id' and 'for'
+                            Label       => $DynamicFieldHTML->{Label}[$ValueRowIndex],
                             Field       => $DynamicFieldHTML->{MultiValue}[$ValueRowIndex],
                             Index       => $ValueRowIndex,
                             CellClasses => $CellClassString . ' MultiValue_' . $ValueRowIndex,
@@ -299,7 +299,7 @@ sub EditSectionRender {
                     Name => 'Template' . $ColBlockName,
                     Data => {
                         %CellBlockData,
-                        Label => $DynamicFieldHTML->{Label},                # TODO: fix the numbering of 'id' and 'for'
+                        Label => $DynamicFieldHTML->{LabelTemplate},
                         Field => $DynamicFieldHTML->{MultiValueTemplate},
                     }
                 };

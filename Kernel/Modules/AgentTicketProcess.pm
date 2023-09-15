@@ -2672,8 +2672,7 @@ sub _RenderDynamicField {
     );
 
     my %Data = (
-        Name  => $DynamicFieldConfig->{Name},
-        Label => $DynamicFieldHTML->{Label},
+        Name => $DynamicFieldConfig->{Name},
     );
 
     # Create one block for each multivalue item
@@ -2681,6 +2680,7 @@ sub _RenderDynamicField {
         for ( my $MultiValueIndex = 0; $MultiValueIndex < scalar keys $DynamicFieldHTML->{HTML}->%*; $MultiValueIndex++ ) {
 
             $Data{Content} = $DynamicFieldHTML->{HTML}{$MultiValueIndex};
+            $Data{Label}   = $DynamicFieldHTML->{Label}[$MultiValueIndex];
             $LayoutObject->Block(
                 Name => $Param{ActivityDialogField}->{LayoutBlock} || 'rw:DynamicField',
                 Data => \%Data,
@@ -2689,6 +2689,7 @@ sub _RenderDynamicField {
     }
     else {
         $Data{Content} = $DynamicFieldHTML->{Field};
+        $Data{Label}   = $DynamicFieldHTML->{Label};
 
         $LayoutObject->Block(
             Name => $Param{ActivityDialogField}->{LayoutBlock} || 'rw:DynamicField',
