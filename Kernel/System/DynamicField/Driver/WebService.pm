@@ -270,6 +270,7 @@ sub EditFieldRender {
         'DynamicField/Agent/WebService';
 
     my @ResultHTML;
+    my @ResultLabels;
     for my $ValueIndex ( 0 .. $#{$Value} ) {
         my $FieldID = $FieldConfig->{MultiValue} ? $FieldName . '_' . $ValueIndex : $FieldName;
 
@@ -300,9 +301,17 @@ sub EditFieldRender {
                 SelectionHTML => $SelectionHTML,
             },
         );
+
+        # call EditLabelRender on the common Driver
+        push @ResultLabels, $Self->EditLabelRender(
+            %Param,
+            Mandatory => $Param{Mandatory} || '0',
+            FieldName => $FieldID,
+        );
     }
 
     my $TemplateHTML;
+    my $TemplateLabel;
     if ( $FieldConfig->{MultiValue} && !$Param{ReadOnly} ) {
         my $FieldID = $FieldName . '_Template';
 
@@ -330,6 +339,13 @@ sub EditFieldRender {
                 %FieldTemplateData,
                 SelectionHTML => $SelectionHTML,
             },
+        );
+
+        # call EditLabelRender on the common Driver
+        my $TemplateLabel = $Self->EditLabelRender(
+            %Param,
+            Mandatory => $Param{Mandatory} || '0',
+            FieldName => $FieldID,
         );
     }
 
@@ -362,23 +378,17 @@ Core.App.Subscribe('Event.AJAX.FormUpdate.Callback', function(Data) {
 EOF
     }
 
-    # call EditLabelRender on the common Driver
-    my $LabelString = $Self->EditLabelRender(
-        %Param,
-        Mandatory => $Param{Mandatory} || '0',
-        FieldName => $FieldConfig->{MultiValue} ? $FieldName . '_0' : $FieldName,
-    );
-
-    my $Data = {
-        Label => $LabelString,
-    };
+    my $Data;
 
     if ( $FieldConfig->{MultiValue} ) {
         $Data->{MultiValue}         = \@ResultHTML;
+        $Data->{Label}              = \@ResultLabels;
         $Data->{MultiValueTemplate} = $TemplateHTML;
+        $Data->{LabelTemplate}      = $TemplateLabel;
     }
     else {
         $Data->{Field} = $ResultHTML[0];
+        $Data->{Label} = $ResultLabels[0];
     }
 
     return $Data;
