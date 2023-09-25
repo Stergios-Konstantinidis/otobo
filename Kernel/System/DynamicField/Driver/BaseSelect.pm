@@ -347,7 +347,7 @@ sub EditFieldRender {
 
         my $SelectionHTML = $Param{LayoutObject}->BuildSelection(
             Data        => $DataValues || {},
-            Disabled    => $Param{Readonly},
+            Readonly    => $Param{Readonly},
             Name        => $FieldName,
             ID          => $FieldID,
             SelectedID  => $Value->[$ValueIndex],
@@ -470,7 +470,9 @@ sub EditFieldValueGet {
             my @Data;
 
             # delete the template value
-            pop @DataAll;
+            if ( !$Param{DynamicFieldConfig}->{Readonly} ) {
+                pop @DataAll;
+            }
 
             for my $Item (@DataAll) {
                 push @Data, $Item // '';

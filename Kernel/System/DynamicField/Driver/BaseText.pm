@@ -484,7 +484,9 @@ sub EditFieldValueGet {
             my @Data;
 
             # delete the template value
-            pop @DataAll;
+            if ( !$Param{DynamicFieldConfig}->{Readonly} ) {
+                pop @DataAll;
+            }
 
             # delete empty values (can happen if the user has selected the "-" entry)
             for my $Item (@DataAll) {

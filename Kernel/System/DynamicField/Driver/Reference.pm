@@ -347,7 +347,7 @@ sub EditFieldRender {
                 my $FieldID = $FieldName . '_' . $ValueIndex;
                 push @SelectionHTML, $Param{LayoutObject}->BuildSelection(
                     Data         => $PossibleValues || {},
-                    Disabled     => $Param{Readonly},
+                    Readonly     => $Param{Readonly},
                     Name         => $FieldName,
                     ID           => $FieldID,
                     SelectedID   => $Value->[$ValueIndex],
@@ -362,7 +362,7 @@ sub EditFieldRender {
             my @SelectedIDs = grep {$_} $Value->@*;
             push @SelectionHTML, $Param{LayoutObject}->BuildSelection(
                 Data         => $PossibleValues || {},
-                Disabled     => $Param{Readonly},
+                Readonly     => $Param{Readonly},
                 Name         => $FieldName,
                 SelectedID   => \@SelectedIDs,
                 Class        => $FieldClass,
@@ -433,7 +433,6 @@ sub EditFieldRender {
 
         my $SelectionHTML = $Param{LayoutObject}->BuildSelection(
             Data        => $PossibleValues || {},
-            Disabled    => $Param{Readonly},
             Name        => $FieldName,
             ID          => $FieldTemplateData{FieldID},
             Class       => $FieldClass,
@@ -516,11 +515,13 @@ sub EditFieldValueGet {
         && ref $Param{ParamObject} eq 'Kernel::System::Web::Request'
         )
     {
-        if ( $Param{DynamicFieldConfig}->{Config}->{MultiValue} ) {
+        if ( $Param{DynamicFieldConfig}->{Config}{MultiValue} ) {
             my @DataAll = $Param{ParamObject}->GetArray( Param => $FieldName );
 
             # delete the template value
-            pop @DataAll;
+            if ( !$Param{DynamicFieldConfig}->{Readonly} ) {
+                pop @DataAll;
+            }
 
             # delete empty values (can happen if the user has selected the "-" entry)
             $Value = [ map { $_ // '' } @DataAll ];

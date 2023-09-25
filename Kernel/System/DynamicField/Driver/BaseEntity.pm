@@ -270,7 +270,7 @@ sub EditFieldRender {
             my $FieldID = $FieldName . '_' . $ValueIndex;
             push @SelectionHTML, $Param{LayoutObject}->BuildSelection(
                 Data       => $PossibleValues || {},
-                Disabled   => $Param{Readonly},
+                Readonly   => $Param{Readonly},
                 Name       => $FieldName,
                 ID         => $FieldID,
                 SelectedID => $Value->[$ValueIndex],
@@ -283,7 +283,7 @@ sub EditFieldRender {
         my @SelectedIDs = grep {$_} $Value->@*;
         push @SelectionHTML, $Param{LayoutObject}->BuildSelection(
             Data       => $PossibleValues || {},
-            Disabled   => $Param{Readonly},
+            Readonly   => $Param{Readonly},
             Name       => $FieldName,
             SelectedID => \@SelectedIDs,
             Class      => $FieldClass,
@@ -332,7 +332,6 @@ sub EditFieldRender {
 
         my $SelectionHTML = $Param{LayoutObject}->BuildSelection(
             Data        => $PossibleValues || {},
-            Disabled    => $Param{Readonly},
             Name        => $FieldName,
             ID          => $FieldTemplateData{FieldID},
             Translation => $FieldConfig->{TranslatableValues} || 0,
@@ -415,7 +414,7 @@ sub EditFieldValueGet {
     {
         my @Data = $Param{ParamObject}->GetArray( Param => $FieldName );
 
-        if ( $Param{DynamicFieldConfig}->{Config}->{MultiValue} ) {
+        if ( $Param{DynamicFieldConfig}->{Config}{MultiValue} && !$Param{DynamicFieldConfig}->{Readonly} ) {
 
             # delete the template value
             pop @Data;

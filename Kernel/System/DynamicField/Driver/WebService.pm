@@ -282,7 +282,7 @@ sub EditFieldRender {
 
         my $SelectionHTML = $Param{LayoutObject}->BuildSelection(
             Data        => $DataValues || {},
-            Disabled    => $Param{Readonly},
+            Readonly    => $Param{Readonly},
             Name        => $FieldName,
             ID          => $FieldID,
             SelectedID  => $Value->[$ValueIndex],
@@ -403,10 +403,12 @@ sub EditFieldValueGet {
     {
         my @Data = $Param{ParamObject}->GetArray( Param => $FieldName );
 
-        if ( $Param{DynamicFieldConfig}->{Config}->{MultiValue} ) {
+        if ( $Param{DynamicFieldConfig}->{Config}{MultiValue} ) {
 
             # delete the template value
-            pop @Data;
+            if ( !$Param{DynamicFieldConfig}->{Readonly} ) {
+                pop @Data;
+            }
             $Value = \@Data;
 
         }
