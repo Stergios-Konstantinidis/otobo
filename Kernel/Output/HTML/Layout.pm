@@ -2374,6 +2374,7 @@ build a HTML option element based on given data
         Size            => 1,                # (optional) default 1 element size
         Class           => 'class',          # (optional) a css class, include 'Modernize' to activate InputFields
         Disabled        => 0,                # (optional) default 0 (0|1) disable the element
+        Readonly        => 0,                # (optional) default 0 (0|1) set the element readonly
         AutoComplete    => 'off',            # (optional)
         OnChange        => 'javascript',     # (optional)
         OnClick         => 'javascript',     # (optional)
@@ -3583,6 +3584,8 @@ Depending on the SysConfig settings the controls to set the date could be multip
                                                   #   client side with JS
         Disabled => 1,                            # optional (1 or 0), when active select and checkbox controls gets the
                                                   #   disabled attribute and input fields gets the read only attribute
+        Readonly => 1,                            # optional (1 or 0), when active all input fields gets the readonly
+                                                  #   attribute
         Suffix => 'some suffix',                  # optional, is attached at the end of Names, IDs etc.
     );
 
@@ -3706,6 +3709,7 @@ sub BuildDateSelection {
             Class       => $Validate ? "Validate_DateYear $Class" : $Class,
             Title       => $Self->{LanguageObject}->Translate('Year'),
             Disabled    => $Param{Disabled},
+            Readonly    => $Param{Readonly},
         );
     }
     else {
@@ -3713,9 +3717,9 @@ sub BuildDateSelection {
             '<input type="text" '
             . ( $Validate ? qq{class="Validate_DateYear $Class" } : qq{class="$Class" } )
             . qq{name="${Prefix}Year" id="${Prefix}Year${Suffix}" size="4" maxlength="4" }
-            . sprintf( 'title="%s" ',   $Self->{LanguageObject}->Translate('Year') )
+            . sprintf( 'title="%s" ', $Self->{LanguageObject}->Translate('Year') )
             . sprintf( 'value="%02d" ', ( $Param{ $Prefix . 'Year' } || $Y ) )
-            . ( $Param{Disabled} ? 'readonly' : '' )
+            . ( ( $Param{Disabled} || $Param{Readonly} ) ? 'readonly' : '' )
             . '>';
     }
 
@@ -3731,6 +3735,7 @@ sub BuildDateSelection {
             Class       => $Validate ? "Validate_DateMonth $Class" : $Class,
             Title       => $Self->{LanguageObject}->Translate('Month'),
             Disabled    => $Param{Disabled},
+            Readonly    => $Param{Readonly},
         );
     }
     else {
@@ -3738,9 +3743,9 @@ sub BuildDateSelection {
             '<input type="text" '
             . ( $Validate ? qq{class="Validate_DateMonth $Class" } : qq{class="$Class" } )
             . qq{name="${Prefix}Month" id="${Prefix}Month${Suffix}" size="2" maxlength="2" }
-            . sprintf( 'title="%s" ',   $Self->{LanguageObject}->Translate('Month') )
+            . sprintf( 'title="%s" ', $Self->{LanguageObject}->Translate('Month') )
             . sprintf( 'value="%02d" ', ( $Param{ $Prefix . 'Month' } || $M ) )
-            . ( $Param{Disabled} ? 'readonly' : '' )
+            . ( ( $Param{Disabled} || $Param{Readonly} ) ? 'readonly' : '' )
             . '>';
     }
 
@@ -3786,6 +3791,7 @@ sub BuildDateSelection {
             Class              => "$DateValidateClasses $Class",
             Title              => $Self->{LanguageObject}->Translate('Day'),
             Disabled           => $Param{Disabled},
+            Readonly           => $Param{Readonly},
             ValidateDateAfter  => $ValidateDateAfterValue,
             ValidateDateBefore => $ValidateDateBeforeValue,
         );
@@ -3795,9 +3801,9 @@ sub BuildDateSelection {
             '<input type="text" '
             . qq{class="${DateValidateClasses}${Class}" }
             . qq{name="${Prefix}Day" id="${Prefix}Day${Suffix}" size="2" maxlength="2" }
-            . sprintf( 'title="%s" ',   $Self->{LanguageObject}->Translate('Day') )
+            . sprintf( 'title="%s" ', $Self->{LanguageObject}->Translate('Day') )
             . sprintf( 'value="%02d" ', ( $Param{ $Prefix . 'Day' } || $D ) )
-            . ( $Param{Disabled} ? 'readonly' : '' )
+            . ( ( $Param{Disabled} || $Param{Readonly} ) ? 'readonly' : '' )
             . '>';
 
     }
@@ -3818,6 +3824,7 @@ sub BuildDateSelection {
                 Class       => $Validate ? ( 'Validate_DateHour ' . $Class ) : $Class,
                 Title       => $Self->{LanguageObject}->Translate('Hours'),
                 Disabled    => $Param{Disabled},
+                Readonly    => $Param{Readonly},
             );
         }
         else {
@@ -3825,9 +3832,9 @@ sub BuildDateSelection {
                 '<input type="text" '
                 . ( $Validate ? qq{class="Validate_DateHour $Class" } : qq{class="$Class" } )
                 . qq{name="${Prefix}Hour" id="${Prefix}Hour${Suffix}" size="2" maxlength="2" }
-                . sprintf( 'title="%s" ',   $Self->{LanguageObject}->Translate('Hours') )
+                . sprintf( 'title="%s" ', $Self->{LanguageObject}->Translate('Hours') )
                 . sprintf( 'value="%02d" ', ( $Param{ $Prefix . 'Hour' } || $h ) )
-                . ( $Param{Disabled} ? 'readonly' : '' )
+                . ( ( $Param{Disabled} || $Param{Readonly} ) ? 'readonly' : '' )
                 . '>';
 
         }
@@ -3846,6 +3853,7 @@ sub BuildDateSelection {
                 Class       => $Validate ? ( 'Validate_DateMinute ' . $Class ) : $Class,
                 Title       => $Self->{LanguageObject}->Translate('Minutes'),
                 Disabled    => $Param{Disabled},
+                Readonly    => $Param{Readonly},
             );
         }
         else {
@@ -3853,9 +3861,9 @@ sub BuildDateSelection {
                 '<input type="text" '
                 . ( $Validate ? qq{class="Validate_DateMinute $Class" } : qq{class="$Class" } )
                 . qq{name="${Prefix}Minute" id="${Prefix}Minute${Suffix}" size="2" maxlength="2" }
-                . sprintf( 'title="%s" ',   $Self->{LanguageObject}->Translate('Minutes') )
+                . sprintf( 'title="%s" ', $Self->{LanguageObject}->Translate('Minutes') )
                 . sprintf( 'value="%02d" ', ( $Param{ $Prefix . 'Minute' } || $m ) )
-                . ( $Param{Disabled} ? 'readonly' : '' )
+                . ( ( $Param{Disabled} || $Param{Readonly} ) ? 'readonly' : '' )
                 . '>';
         }
     }
@@ -5626,10 +5634,11 @@ sub _BuildSelectionAttributeRefCreate {
         }
     }
 
-    # check HTML params, TODO: the values are not really needed
-    for (qw(Multiple Disabled)) {
+    # check HTML params
+    # NOTE always consider sub _BuildSelectionOuptut() when altering this
+    for (qw(Multiple Disabled Readonly)) {
         if ( $Param{$_} ) {
-            $Attributes{ lc $_ } = lc $_;
+            $Attributes{ lc $_ } = undef;
         }
     }
 
