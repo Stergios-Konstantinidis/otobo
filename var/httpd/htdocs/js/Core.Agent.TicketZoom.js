@@ -849,3 +849,32 @@ Core.Agent.TicketZoom = (function (TargetNS) {
 
     return TargetNS;
 }(Core.Agent.TicketZoom || {}));
+
+
+    function copyTitleToClipboard(){
+        // Get the current url
+        var thisPagesLink = new String(window.location.href);
+        // Get tickets title
+        var thisPagesTitle = $(this).closest('label').attr('title');
+        // Parse this as a string with html formating
+        var copytext = new String(`<a href="${thisPagesLink}">${thisPagesTitle}</a>`);
+        copytext.title = thisPagesTitle;
+        copytext.href = thisPagesLink;
+
+        // Check the write access to the clipboard
+        if (navigator?.clipboard?.write) {
+            // Write the text; fallback to just copy the title text
+            try {
+                // This requires the clipboardItem api, it is not available to all versions of firefox.
+                // On firefox it needs to be manually enabled through the 'about:config' page.
+                navigator.clipboard.write([new window.ClipboardItem({
+                    'text/html': new Blob([copytext], { type: 'text/html' }),
+                    'text/plain': new Blob([thisPagesTitle], { type: 'text/plain' }),
+                })])
+            } catch (error) {
+                // Fallback on the simpler version supported on all browser versions
+                navigator.clipboard.writeText(thisPagesTitle)
+            }
+        }
+
+    }
