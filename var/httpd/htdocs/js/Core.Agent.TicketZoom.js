@@ -882,6 +882,14 @@ Core.Agent.TicketZoom = (function (TargetNS) {
                navigator.clipboard.writeText(thisPagesTitle)
            }
        }
+       const copyButton = document.getElementById('copyButton')
+       copyButton.onclick = function(){
+        copyTitleToClipboard();
+        copyButton.textContent = '✅';
+        setTimeout(function () { 
+            copyButton.style.color = '📋';
+          }, 2000);
+       }
 }   
 }(Core.Agent.TicketZoom || {}));
 
